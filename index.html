@@ -1,29 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="./assets/logo-vivienda-qjhApf-x.webp"
-    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Chewy&family=Merienda:wght@300..900&family=Rubik+Doodle+Shadow&family=Tangerine:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Chewy&family=Merienda:wght@300..900&family=Rubik+Doodle+Shadow&family=Tangerine:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <title>Vite + React + TS</title>
-    <script type="module" crossorigin src="./assets/index-sFI6eptZ.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-N0vmFZ1y.css">
+    <title>Chat Simple</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div class="container">
+      <h1>Chat Simple</h1>
+      <ul id="messages"></ul>
+      <input type="text" id="messageInput" placeholder="Escribe un mensaje" />
+      <span id="submitButton">Enviar</span>
+    </div>
+
+    <script>
+      const socket = io('https://nest-iot-server.vercel.app'); // Cambia la URL si es necesario
+
+      const messagesList = document.getElementById('messages');
+      const messageInput = document.getElementById('messageInput');
+      const submitButton = document.getElementById('submitButton');
+
+      socket.on('message', (message) => {
+        console.log(message);
+        const listItem = document.createElement('li');
+        listItem.textContent = message;
+        messagesList.appendChild(listItem);
+      });
+
+      socket.on('humidity', (payload) => {
+        console.log(payload);
+      });
+
+      socket.on('monoxide', (payload) => {
+        console.log(payload);
+      });
+
+      submitButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const message = messageInput.value;
+        if (message) {
+          // Verifica que no esté vacío
+          socket.emit('message', message);
+          messageInput.value = ''; // Limpia el campo después de enviar
+        }
+      });
+    </script>
   </body>
 </html>
